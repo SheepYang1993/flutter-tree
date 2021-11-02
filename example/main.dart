@@ -3,26 +3,28 @@ import 'package:flutter_tree/flutter_tree.dart';
 
 import 'tree_data.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tree example',
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        appBar: AppBar(title: Text('Flutter Tree')),
+        appBar: AppBar(title: const Text('Flutter Tree')),
         body: TreeView(
           data: treeData,
-          titleOnTap: () {
-            print('title');
+          titleOnTap: (String title) {
+            debugPrint('title => $title');
           },
-          leadingOnTap: () {
-            print('leading');
+          leadingOnTap: (String title) {
+            debugPrint('leading => $title');
           },
-          trailingOnTap: () {
-            print('trailing');
+          trailingOnTap: (String title) {
+            debugPrint('trailing => $title');
           },
         ),
 

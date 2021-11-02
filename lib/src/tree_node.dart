@@ -10,11 +10,13 @@ class TreeNode extends StatefulWidget {
   final Widget? leading;
   final Widget? trailing;
 
-  final Function? titleOnTap;
-  final Function? leadingOnTap;
-  final Function? trailingOnTap;
+  final Function(String title)? titleOnTap;
+  final Function(String title)? leadingOnTap;
+  final Function(String title)? trailingOnTap;
+  final Map<String, dynamic>? nodeInfo;
 
   const TreeNode({
+    required this.nodeInfo,
     this.level = 0,
     this.expaned = false,
     this.offsetLeft = 24.0,
@@ -73,7 +75,7 @@ class _TreeNodeState extends State<TreeNode>
                 onTap: () {
                   if (widget.leadingOnTap != null &&
                       widget.leadingOnTap is Function) {
-                    widget.leadingOnTap!();
+                    widget.leadingOnTap!(widget.nodeInfo?['title']);
                   }
                 },
                 child: Center(
@@ -91,7 +93,7 @@ class _TreeNodeState extends State<TreeNode>
                   onTap: () {
                     if (widget.titleOnTap != null &&
                         widget.titleOnTap is Function) {
-                      widget.titleOnTap!();
+                      widget.titleOnTap!(widget.nodeInfo?['title']);
                     }
                   },
                   child: widget.title ?? Container(),
@@ -112,7 +114,7 @@ class _TreeNodeState extends State<TreeNode>
                         }
                         if (widget.trailingOnTap != null &&
                             widget.trailingOnTap is Function) {
-                          widget.trailingOnTap!();
+                          widget.trailingOnTap!(widget.nodeInfo?['title']);
                         }
                       });
                     },
