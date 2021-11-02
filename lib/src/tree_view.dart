@@ -1,52 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tree/src/tree_node_bean.dart';
 
 import 'tree_node.dart';
 
 class TreeView extends StatelessWidget {
-  final List<Map<String, dynamic>> data;
+  final List<TreeNodeBean> data;
 
-  final String titleKey;
-  final String leadingKey;
-  final String expanedKey;
-  final String childrenKey;
   final double offsetLeft;
 
-  final Function(String title)? titleOnTap;
-  final Function(String title)? leadingOnTap;
-  final Function(String title)? trailingOnTap;
+  final Function(TreeNodeBean? nodeInfo)? titleOnTap;
+  final Function(TreeNodeBean? nodeInfo)? leadingOnTap;
+  final Function(TreeNodeBean? nodeInfo)? trailingOnTap;
 
   const TreeView({
     required this.data,
-    this.titleKey = 'title',
-    this.leadingKey = 'leading',
-    this.expanedKey = 'expaned',
-    this.childrenKey = 'children',
     this.offsetLeft = 24.0,
     this.titleOnTap,
     this.leadingOnTap,
     this.trailingOnTap,
-  }) : assert(data != null);
+  });
 
-  List<TreeNode> _geneTreeNodes(List list) {
+  List<TreeNode> _geneTreeNodes(List<TreeNodeBean> list) {
     List treeNodes = <TreeNode>[];
 
     for (int i = 0; i < list.length; i++) {
-      final Map<String, dynamic> item = list[i];
-      final title = item[titleKey] == null ? null : Text(item[titleKey]);
-      final leading = item[leadingKey] == null ? null : Text(item[leadingKey]);
-      final expaned = item[expanedKey] ?? false;
-      final children = item[childrenKey] as List;
+      final TreeNodeBean item = list[i];
 
       treeNodes.add(TreeNode(
         nodeInfo: item,
-        title: title,
-        leading: leading,
-        expaned: expaned,
         offsetLeft: offsetLeft,
         titleOnTap: titleOnTap,
         leadingOnTap: leadingOnTap,
         trailingOnTap: trailingOnTap,
-        children: _geneTreeNodes(children),
+        children: _geneTreeNodes(item.children ?? []),
       ));
     }
 
@@ -58,23 +44,15 @@ class TreeView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: List.generate(data.length, (int index) {
-        final Map<String, dynamic> item = data[index];
-        final title = item[titleKey] == null ? null : Text(item[titleKey]);
-        final leading =
-            item[leadingKey] == null ? null : Text(item[leadingKey]);
-        final expaned = item[expanedKey] ?? false;
-        final children = item[childrenKey] as List;
+        final TreeNodeBean item = data[index];
 
         return TreeNode(
           nodeInfo: item,
-          title: title,
-          leading: leading,
-          expaned: expaned,
           offsetLeft: offsetLeft,
           titleOnTap: titleOnTap,
           leadingOnTap: leadingOnTap,
           trailingOnTap: trailingOnTap,
-          children: _geneTreeNodes(children),
+          children: _geneTreeNodes(item.children ?? []),
         );
       }),
     );

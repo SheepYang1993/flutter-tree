@@ -35,11 +35,11 @@ TreeNode(
 final List<Map<String, dynamic>> treeData = [
   {
     "title": "Title",
-    "expaned": true,
+    "expand": true,
     "children": [
       {
         "title": "Title",
-        "expaned": true,
+        "expand": true,
         "children": [],
       },
     ],
@@ -68,7 +68,7 @@ TreeView(
 | property | type | default | description | required |
 | :- | :---: | :---: | :---: | :-: |
 | level | int | `0` | Item indent level | `false` |
-| expaned | boolean | `false` | Item is expaned | `false` |
+| expand | boolean | `false` | Item is expand | `false` |
 | offsetLeft | double | `24.0` | Item padding left | `false` |
 | children | double | `List<Widget>` | Children widget | `[]` |
 | title | Widget | `Text('Title')` | Title Widget | `false`  |
@@ -86,7 +86,7 @@ TreeView(
 | data | List<Map<String, dynamic>> | `null` | Tree data | `true` |
 | titleKey | string | `title` | Title key in map | `false` |
 | leadingKey | string | `leading` | Leading key in map | `false` |
-| expanedKey | string | `expaned` | Expaned key in map | `false` |
+| expandKey | string | `expand` | Expand key in map | `false` |
 | childrenKey | string | `children` | Children key in map | `false` |
 | offsetLeft | double | `24.0` | Item padding left | `false` |
 | titleOnTap | Fuction | `null` | Title tap callback | `false` |

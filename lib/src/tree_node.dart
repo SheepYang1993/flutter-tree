@@ -1,37 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tree/src/tree_node_bean.dart';
 
 class TreeNode extends StatefulWidget {
   final int level;
-  final bool expaned;
+  final bool expand;
   final double offsetLeft;
   final List<Widget> children;
 
-  final Widget? title;
-  final Widget? leading;
-  final Widget? trailing;
-
-  final Function(String title)? titleOnTap;
-  final Function(String title)? leadingOnTap;
-  final Function(String title)? trailingOnTap;
-  final Map<String, dynamic>? nodeInfo;
+  final Function(TreeNodeBean? nodeInfo)? titleOnTap;
+  final Function(TreeNodeBean? nodeInfo)? leadingOnTap;
+  final Function(TreeNodeBean? nodeInfo)? trailingOnTap;
+  final TreeNodeBean? nodeInfo;
 
   const TreeNode({
     required this.nodeInfo,
     this.level = 0,
-    this.expaned = false,
+    this.expand = false,
     this.offsetLeft = 24.0,
     this.children = const [],
-    this.title = const Text('Title'),
-    this.leading = const IconButton(
-      icon: Icon(Icons.star_border),
-      iconSize: 16,
-      onPressed: null,
-    ),
-    this.trailing = const IconButton(
-      icon: Icon(Icons.expand_more),
-      iconSize: 16,
-      onPressed: null,
-    ),
     this.titleOnTap,
     this.leadingOnTap,
     this.trailingOnTap,
@@ -43,13 +29,15 @@ class TreeNode extends StatefulWidget {
 
 class _TreeNodeState extends State<TreeNode>
     with SingleTickerProviderStateMixin {
-  bool _isExpaned = false;
+  bool _isExpand = false;
 
   late AnimationController _rotationController;
   final Tween<double> _turnsTween = Tween<double>(begin: 0.0, end: -0.5);
 
+  bool isCheck = false;
+
   initState() {
-    _isExpaned = widget.expaned;
+    _isExpand = widget.expand;
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -73,18 +61,24 @@ class _TreeNodeState extends State<TreeNode>
             children: <Widget>[
               GestureDetector(
                 onTap: () {
+                  setState(() {
+                    isCheck = !isCheck;
+                  });
                   if (widget.leadingOnTap != null &&
                       widget.leadingOnTap is Function) {
-                    widget.leadingOnTap!(widget.nodeInfo?['title']);
+                    widget.leadingOnTap!(widget.nodeInfo);
                   }
                 },
                 child: Center(
-                  child: widget.leading ??
-                      const IconButton(
-                        icon: Icon(Icons.star_border),
-                        iconSize: 16,
-                        onPressed: null,
-                      ),
+                  child: (widget.nodeInfo?.showCheckBox == true)
+                      ? Checkbox(
+                          value: isCheck,
+                          onChanged: (value) {
+                            setState(() {
+                              isCheck = (value ?? false);
+                            });
+                          })
+                      : Container(),
                 ),
               ),
               SizedBox(width: 6.0),
@@ -93,10 +87,10 @@ class _TreeNodeState extends State<TreeNode>
                   onTap: () {
                     if (widget.titleOnTap != null &&
                         widget.titleOnTap is Function) {
-                      widget.titleOnTap!(widget.nodeInfo?['title']);
+                      widget.titleOnTap!(widget.nodeInfo);
                     }
                   },
-                  child: widget.title ?? Container(),
+                  child: Text(widget.nodeInfo?.name ?? '标题'),
                 ),
               ),
               SizedBox(width: 6.0),
@@ -106,25 +100,26 @@ class _TreeNodeState extends State<TreeNode>
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        _isExpaned = !_isExpaned;
-                        if (_isExpaned) {
+                        _isExpand = !_isExpand;
+                        if (_isExpand) {
                           _rotationController.forward();
                         } else {
                           _rotationController.reverse();
                         }
                         if (widget.trailingOnTap != null &&
                             widget.trailingOnTap is Function) {
-                          widget.trailingOnTap!(widget.nodeInfo?['title']);
+                          widget.trailingOnTap!(widget.nodeInfo);
                         }
                       });
                     },
                     child: RotationTransition(
-                      child: widget.trailing ??
-                          const IconButton(
-                            icon: Icon(Icons.expand_more),
-                            iconSize: 16,
-                            onPressed: null,
-                          ),
+                      child: (widget.nodeInfo?.expand == true)
+                          ? const IconButton(
+                              icon: Icon(Icons.expand_more),
+                              iconSize: 16,
+                              onPressed: null,
+                            )
+                          : Container(),
                       turns: _turnsTween.animate(_rotationController),
                     ),
                   ),
@@ -134,7 +129,7 @@ class _TreeNodeState extends State<TreeNode>
           ),
         ),
         Visibility(
-          visible: children.length > 0 && _isExpaned,
+          visible: children.length > 0 && _isExpand,
           child: Padding(
             padding: EdgeInsets.only(left: level + 1 * offsetLeft),
             child: Column(
